@@ -1,0 +1,36 @@
+# Example: run relgate as a release gate against a service you start in CI.
+# This is a template — adapt the "start your service" step to your app.
+name: relgate
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - run: go build -o relgate ./cmd/relgate
+
+      # Start the service you want to test. Replace with your own app.
+      # - run: docker compose up -d
+      # - run: ./scripts/wait-for-health.sh http://localhost:8000/health
+
+      # - run: ./relgate -config relgate.ci.yaml -md report.md
+
+      # - if: always()
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const fs = require('fs');
+      #       const body = fs.readFileSync('report.md', 'utf8');
+      #       await github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body,
+      #       });

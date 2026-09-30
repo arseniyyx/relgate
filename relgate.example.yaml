@@ -1,0 +1,28 @@
+# relgate configuration.
+#
+# relgate only contacts hosts you list in allowed_hosts, and refuses to run at all
+# until you affirm you are authorized to test them. Point it at your own staging
+# environment or a local docker-compose, not at anything you don't control.
+
+target: http://localhost:8000
+allowed_hosts:
+  - localhost
+
+# Affirm you own or are authorized to test the hosts above. Required.
+i_am_authorized: true
+
+security:
+  enabled: true
+  paths: ["/", "/health"]
+  # Fail the run on findings at this severity or higher: high | medium | low
+  fail_on: high
+
+load:
+  enabled: true
+  path: /health
+  duration_seconds: 10
+  concurrency: 20          # hard ceiling: 200
+  max_rps: 300             # hard ceiling: 2000
+  thresholds:
+    p95_ms: 400
+    max_error_rate: 0.01
